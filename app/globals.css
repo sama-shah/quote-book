@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-paper: #ede8dd;
+  --color-paper-dark: #e2dccd;
+  --color-card: #f7f3e9;
+  --color-ink: #2b2620;
+  --color-ink-faint: #6d6558;
+  --color-stamp: #a33327;
+  --color-tape: #d9c78f;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-condensed: var(--font-condensed), "Arial Narrow", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  /* subtle paper grain */
+  background-image: radial-gradient(
+      rgba(43, 38, 32, 0.035) 1px,
+      transparent 1px
+    );
+  background-size: 4px 4px;
+}
+
+.stamp {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-stamp);
+  border: 2px solid var(--color-stamp);
+  transform: rotate(-2deg);
+  display: inline-block;
+  padding: 0.1em 0.5em;
+}
+
+.index-card {
+  background: var(--color-card);
+  border: 1px solid rgba(43, 38, 32, 0.18);
+  box-shadow: 0 1px 3px rgba(43, 38, 32, 0.14);
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    rgba(43, 38, 32, 0.06) 28px
+  );
+}
+
+/* Play mode strips everything */
+.play-mode {
+  background: #000 !important;
+  background-image: none !important;
+  color: #fff;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }

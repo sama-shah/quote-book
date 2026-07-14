@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Ledger
 
-## Getting Started
+A mobile-first archive of the things people say — and a party game built out of it.
 
-First, run the development server:
+**Capture** a quote with its full metadata (speaker, witnesses, location, time, context, photo). Claude reads each submission and returns a one-line **verdict**, a **severity** rating (1–5), and freeform **tags** it invents as the archive grows. Browse the record as a **Timeline** (grouped by night), a **Map** (locations sized by quote count), or the **Cast** (per-person rap sheets with live superlatives).
+
+Then put the phone on your forehead. **Who Said This** is Heads Up with your own group's quotes: the room reads the quote aloud, the holder guesses who said it. Tilt down = correct, tilt up = pass (tap zones work everywhere). **Context Only** mode shows just the setup line and the room has to guess the quote itself. Cross-game stats name the most unmistakable person and the biggest chameleon.
+
+## Setup
 
 ```bash
+npm install
+cp .env.example .env        # add your ANTHROPIC_API_KEY
+npx prisma migrate dev      # creates prisma/dev.db
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 — on your phone, use your machine's LAN IP (e.g. `http://192.168.1.x:3000`) so the game works in hand.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Quotes still save if the API key is missing or a classification fails; a "Request ruling again" button retries.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Stack
 
-## Learn More
+- Next.js (App Router, TypeScript) + Tailwind
+- SQLite via Prisma (`prisma/schema.prisma`)
+- Anthropic API (`claude-sonnet-4-6`) called server-side from route handlers — the key never reaches the client
+- Photos are stored in `public/uploads/` behind a single module (`lib/storage.ts`) so it can be swapped for blob storage
 
-To learn more about Next.js, take a look at the following resources:
+## Notes for the demo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Tilt controls**: iOS requires a permission prompt, which fires on the Start tap. If denied (or on desktop), tap the bottom half for correct and the top half for pass — always active.
+- **Play mode** is full black/white with huge type; everything else is the evidence room.
+- The tag taxonomy is emergent: existing tags are passed back to Claude on every classification so it reuses them when they fit and only invents new ones when nothing does.
