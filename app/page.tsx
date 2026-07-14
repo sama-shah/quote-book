@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Quote } from "@/lib/types";
 
+const SHORTCUTS = [
+  { tab: "Capture", icon: "✏️", label: "Capture" },
+  { tab: "Timeline", icon: "🕰️", label: "Timeline" },
+  { tab: "Map", icon: "🌍", label: "Map" },
+  { tab: "Cast", icon: "🎭", label: "Cast" },
+  { tab: "Play", icon: "▶️", label: "Play" },
+];
+
 export default function Home() {
   const [quotes, setQuotes] = useState<Quote[]>([]);
 
@@ -17,7 +25,7 @@ export default function Home() {
   const latest = quotes[0];
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center px-6 py-10 text-center">
       <p className="text-[11px] uppercase tracking-[0.3em] text-ink-faint">
         Case file no. 001
       </p>
@@ -31,20 +39,45 @@ export default function Home() {
 
       <Link
         href="/ledger"
-        className="mt-10 block w-full max-w-xs bg-ink px-8 py-5 text-lg uppercase tracking-[0.2em] text-paper shadow-[4px_4px_0_var(--color-stamp)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+        className="mt-10 block w-full max-w-xs bg-ink px-8 py-5 text-lg uppercase tracking-[0.2em] text-paper shadow-[4px_4px_0_var(--color-stamp)] transition-transform duration-150 hover:scale-105 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
       >
         Open the Ledger
       </Link>
 
-      <Link
-        href="/ledger?tab=Play"
-        className="mt-4 block w-full max-w-xs border border-ink/30 px-8 py-3 text-sm uppercase tracking-[0.2em] text-ink"
-      >
-        Straight to the game
-      </Link>
+      <div className="mt-4 flex w-full max-w-xs gap-3">
+        <Link
+          href="/ledger?tab=Play"
+          className="flex-1 border border-ink/30 px-4 py-3 text-xs uppercase tracking-[0.15em] text-ink transition-all duration-150 hover:scale-105 hover:shadow-md"
+        >
+          Straight to the game
+        </Link>
+        <Link
+          href="/ledger?tab=Play&mode=context-only"
+          className="flex-1 border border-ink/30 px-4 py-3 text-xs uppercase tracking-[0.15em] text-ink transition-all duration-150 hover:scale-105 hover:shadow-md"
+        >
+          Context mode
+        </Link>
+      </div>
+
+      <div className="mt-10 flex items-end justify-center gap-3">
+        {SHORTCUTS.map((s) => (
+          <Link
+            key={s.tab}
+            href={`/ledger?tab=${s.tab}`}
+            className="group flex flex-col items-center gap-1"
+          >
+            <span className="index-card flex h-14 w-14 items-center justify-center rounded-full text-2xl transition-all duration-200 group-hover:scale-125 group-hover:shadow-[3px_3px_0_var(--color-stamp)] group-hover:-translate-y-1">
+              {s.icon}
+            </span>
+            <span className="text-[9px] uppercase tracking-widest text-ink-faint transition-colors group-hover:text-stamp">
+              {s.label}
+            </span>
+          </Link>
+        ))}
+      </div>
 
       {latest && (
-        <figure className="index-card mt-12 w-full max-w-xs p-4 text-left">
+        <figure className="index-card mt-12 w-full max-w-xs p-4 text-left transition-transform duration-200 hover:scale-105 hover:shadow-lg">
           <figcaption className="text-[10px] uppercase tracking-widest text-ink-faint">
             Latest exhibit
           </figcaption>

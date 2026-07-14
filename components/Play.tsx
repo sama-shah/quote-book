@@ -15,6 +15,7 @@ type Props = {
   quotes: Quote[];
   people: Person[];
   locations: Location[];
+  initialMode?: GameMode;
   onExit: () => void;
 };
 
@@ -27,9 +28,15 @@ type DOEWithPermission = typeof DeviceOrientationEvent & {
   requestPermission?: () => Promise<"granted" | "denied">;
 };
 
-export default function Play({ quotes, people, locations, onExit }: Props) {
+export default function Play({
+  quotes,
+  people,
+  locations,
+  initialMode = "who-said-this",
+  onExit,
+}: Props) {
   const [phase, setPhase] = useState<Phase>("setup");
-  const [mode, setMode] = useState<GameMode>("who-said-this");
+  const [mode, setMode] = useState<GameMode>(initialMode);
   const [deck, setDeck] = useState<DeckFilter>({ type: "all" });
   const [duration, setDuration] = useState(60);
   const [guesserId, setGuesserId] = useState<string>("");

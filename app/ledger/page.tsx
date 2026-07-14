@@ -12,18 +12,29 @@ import Play from "@/components/Play";
 const TABS = ["Capture", "Timeline", "Map", "Cast", "Play"] as const;
 type Tab = (typeof TABS)[number];
 
+const TAB_ICONS: Record<Tab, string> = {
+  Capture: "✏️",
+  Timeline: "🕰️",
+  Map: "🌍",
+  Cast: "🎭",
+  Play: "▶️",
+};
+
 export default function Ledger() {
   const [tab, setTab] = useState<Tab>("Capture");
+  const [initialMode, setInitialMode] = useState<"who-said-this" | "context-only">("who-said-this");
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [people, setPeople] = useState<Person[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
-  // Allow /ledger?tab=Play deep links from the landing page.
+  // Allow /ledger?tab=Play&mode=context-only deep links from the landing page.
   useEffect(() => {
-    const wanted = new URLSearchParams(window.location.search).get("tab");
+    const params = new URLSearchParams(window.location.search);
+    const wanted = params.get("tab");
     if (wanted && (TABS as readonly string[]).includes(wanted)) {
       setTab(wanted as Tab);
     }
+    if (params.get("mode") === "context-only") setInitialMode("context-only");
   }, []);
 
   const refresh = useCallback(async () => {
@@ -47,6 +58,7 @@ export default function Ledger() {
         quotes={quotes}
         people={people}
         locations={locations}
+        initialMode={initialMode}
         onExit={() => setTab("Capture")}
       />
     );
@@ -82,10 +94,17 @@ export default function Ledger() {
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`flex-1 py-3 text-[11px] uppercase tracking-widest ${
+              className={`group flex flex-1 flex-col items-center gap-0.5 py-2 text-[9px] uppercase tracking-widest transition-colors ${
                 tab === t ? "font-bold text-stamp" : "text-ink-faint"
-              } ${t === "Play" ? "text-ink bg-ink/10 font-bold" : ""}`}
+              } ${t === "Play" ? "bg-ink/10" : ""}`}
             >
+              <span
+                className={`text-lg leading-none transition-transform duration-150 group-hover:scale-125 group-active:scale-90 ${
+                  tab === t ? "scale-110" : ""
+                }`}
+              >
+                {TAB_ICONS[t]}
+              </span>
               {t}
             </button>
           ))}
