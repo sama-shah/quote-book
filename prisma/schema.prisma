@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  avatarColor String
+  quotes      Quote[]   @relation("Speaker")
+  witnessed   Witness[]
+  turns       Turn[]    @relation("Guesser")
+  guessedAs   Turn[]    @relation("GuessedSpeaker")
+}
+
+model Location {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  quotes Quote[]
+}
+
+model Quote {
+  id         String    @id @default(cuid())
+  text       String
+  speakerId  String
+  speaker    Person    @relation("Speaker", fields: [speakerId], references: [id])
+  locationId String?
+  location   Location? @relation(fields: [locationId], references: [id])
+  context    String?
+  imageUrl   String?
+  severity   Int?
+  verdict    String?
+  tags       String    @default("[]") // JSON array of strings
+  createdAt  DateTime  @default(now())
+  occurredAt DateTime  @default(now())
+  witnesses  Witness[]
+  turns      Turn[]
+}
+
+model Witness {
+  quoteId  String
+  personId String
+  quote    Quote  @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([quoteId, personId])
+}
+
+model Game {
+  id         String   @id @default(cuid())
+  mode       String // "who-said-this" | "context-only"
+  deckFilter String   @default("{}") // JSON: {type: "all"|"speaker"|"location"|"tag", value?}
+  guesserId  String?
+  createdAt  DateTime @default(now())
+  turns      Turn[]
+}
+
+model Turn {
+  id               String  @id @default(cuid())
+  gameId           String
+  game             Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  quoteId          String
+  quote            Quote   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  guesserId        String?
+  guesser          Person? @relation("Guesser", fields: [guesserId], references: [id])
+  guessedSpeakerId String?
+  guessedSpeaker   Person? @relation("GuessedSpeaker", fields: [guessedSpeakerId], references: [id])
+  correct          Boolean
+}
