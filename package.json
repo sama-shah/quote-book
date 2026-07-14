@@ -4,13 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && prisma db push --accept-data-loss && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "seed": "node prisma/seed.mjs",
+    "import": "node prisma/import.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.111.0",
     "@prisma/client": "^6.19.3",
+    "@vercel/blob": "^2.6.1",
     "next": "16.2.10",
     "prisma": "^6.19.3",
     "react": "19.2.4",
