@@ -7,27 +7,22 @@ import CaptureForm from "@/components/CaptureForm";
 import Timeline from "@/components/Timeline";
 import MapView from "@/components/MapView";
 import Cast from "@/components/Cast";
+import Gallery from "@/components/Gallery";
 import Play from "@/components/Play";
 
-const TABS = ["Capture", "Timeline", "Map", "Cast", "Play"] as const;
+const TABS = ["Capture", "Timeline", "Map", "Cast", "Gallery", "Play"] as const;
 type Tab = (typeof TABS)[number];
-
-const TAB_ICONS: Record<Tab, string> = {
-  Capture: "✏️",
-  Timeline: "🕰️",
-  Map: "🌍",
-  Cast: "🎭",
-  Play: "▶️",
-};
 
 export default function Ledger() {
   const [tab, setTab] = useState<Tab>("Capture");
-  const [initialMode, setInitialMode] = useState<"who-said-this" | "context-only">("who-said-this");
+  const [initialMode, setInitialMode] = useState<"who-said-this" | "context-only">(
+    "who-said-this"
+  );
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [people, setPeople] = useState<Person[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
-  // Allow /ledger?tab=Play&mode=context-only deep links from the landing page.
+  // Support /ledger?tab=Play&mode=context-only deep links.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const wanted = params.get("tab");
@@ -71,7 +66,7 @@ export default function Ledger() {
           href="/"
           className="block text-[10px] uppercase tracking-widest text-ink-faint"
         >
-          ← Jab We Quote
+          Jab We Quote
         </Link>
         <h1 className="stamp mt-2 text-2xl">The Ledger</h1>
         <p className="mt-2 text-xs text-ink-faint tracking-widest uppercase">
@@ -86,6 +81,9 @@ export default function Ledger() {
         {tab === "Timeline" && <Timeline quotes={quotes} />}
         {tab === "Map" && <MapView quotes={quotes} />}
         {tab === "Cast" && <Cast quotes={quotes} people={people} />}
+        {tab === "Gallery" && (
+          <Gallery people={people} quotes={quotes} onChanged={refresh} />
+        )}
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 border-t border-ink/20 bg-paper-dark">
@@ -94,17 +92,10 @@ export default function Ledger() {
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`group flex flex-1 flex-col items-center gap-0.5 py-2 text-[9px] uppercase tracking-widest transition-colors ${
+              className={`flex-1 py-3.5 text-[10px] uppercase tracking-widest transition-all duration-150 hover:scale-110 ${
                 tab === t ? "font-bold text-stamp" : "text-ink-faint"
-              } ${t === "Play" ? "bg-ink/10" : ""}`}
+              } ${t === "Play" ? "bg-ink/10 font-bold text-ink" : ""}`}
             >
-              <span
-                className={`text-lg leading-none transition-transform duration-150 group-hover:scale-125 group-active:scale-90 ${
-                  tab === t ? "scale-110" : ""
-                }`}
-              >
-                {TAB_ICONS[t]}
-              </span>
               {t}
             </button>
           ))}

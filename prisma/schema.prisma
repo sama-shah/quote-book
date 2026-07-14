@@ -11,6 +11,10 @@ model Person {
   id          String    @id @default(cuid())
   name        String    @unique
   avatarColor String
+  photoUrl    String?
+  bio         String?
+  birthday    DateTime?
+  nicknames   String    @default("[]") // JSON array of strings
   quotes      Quote[]   @relation("Speaker")
   witnessed   Witness[]
   turns       Turn[]    @relation("Guesser")

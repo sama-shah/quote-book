@@ -4,7 +4,19 @@ export type Person = {
   id: string;
   name: string;
   avatarColor: string;
+  photoUrl?: string | null;
+  bio?: string | null;
+  birthday?: string | null;
+  nicknames?: string; // JSON array
 };
+
+export function personNicknames(p: Person): string[] {
+  try {
+    return JSON.parse(p.nicknames ?? "[]");
+  } catch {
+    return [];
+  }
+}
 
 export type Location = {
   id: string;

@@ -202,12 +202,12 @@ export default function CaptureForm({ people, locations, onSaved }: Props) {
         </div>
 
         <div>
-          <label className={label}>Context — one line of setup</label>
-          <input
-            className={input}
+          <label className={label}>Context — tell the story</label>
+          <textarea
+            className={`${input} min-h-16`}
             value={context}
             onChange={(e) => setContext(e.target.value)}
-            placeholder="Optional but encouraged"
+            placeholder="What was happening. How it got to this. Optional but encouraged."
           />
         </div>
 

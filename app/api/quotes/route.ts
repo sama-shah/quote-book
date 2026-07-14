@@ -99,12 +99,24 @@ const COLORS = [
   "#16a085", "#7f8c8d", "#2c3e50", "#a04000", "#6c3483",
 ];
 
+// Case-insensitive match on name OR nickname, so "saborni" doesn't create a
+// duplicate of "Saborni" and "the professor" resolves to whoever earned it.
 async function upsertPerson(name: string) {
   const trimmed = name.trim();
-  const existing = await prisma.person.findUnique({ where: { name: trimmed } });
+  const lower = trimmed.toLowerCase();
+  const all = await prisma.person.findMany();
+  const existing = all.find((p) => {
+    if (p.name.toLowerCase() === lower) return true;
+    try {
+      return (JSON.parse(p.nicknames) as string[]).some(
+        (n) => n.toLowerCase() === lower
+      );
+    } catch {
+      return false;
+    }
+  });
   if (existing) return existing;
-  const count = await prisma.person.count();
   return prisma.person.create({
-    data: { name: trimmed, avatarColor: COLORS[count % COLORS.length] },
+    data: { name: trimmed, avatarColor: COLORS[all.length % COLORS.length] },
   });
 }
